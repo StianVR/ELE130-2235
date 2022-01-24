@@ -21,7 +21,7 @@ except Exception as e:
 online = False
 
 # Hvis online = True, pass på at IP-adresse er satt riktig.
-EV3_IP = "169.254.79.125"
+EV3_IP = "169.254.183.102"
 
 # Hvis online = False, husk å overføre filen med målinger og 
 # eventuelt filen med beregnede variable fra EV3 til datamaskinen.
