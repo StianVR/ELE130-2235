@@ -21,7 +21,7 @@ def Initialize(wired, filenameMeas, filenameCalcOnline):
     for live kommunikasjon til PC.
     """
 
-    # robot inneholder all info om roboten
+    # robot inneholder all info om roboten 
     robot = {}
     ev3 = EV3Brick()
     robot["brick"] = ev3
