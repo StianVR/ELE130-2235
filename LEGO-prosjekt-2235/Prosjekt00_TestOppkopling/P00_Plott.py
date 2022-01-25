@@ -18,23 +18,23 @@ except Exception as e:
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #     A) online and offline: SET ONLINE FLAG, IP-ADRESSE OG FILENAME
 #
-online = False
+online = False 
 
 # Hvis online = True, pass på at IP-adresse er satt riktig.
-EV3_IP = "169.254.183.102"
+EV3_IP = "169.254.83.76"
 
 # Hvis online = False, husk å overføre filen med målinger og 
 # eventuelt filen med beregnede variable fra EV3 til datamaskinen.
 # Bruk 'Upload'-funksjonen
 
 # --> Filnavn for lagrede MÅLINGER som skal lastes inn offline
-filenameMeas = "Meas_P00_matplotlib_1.txt"
+filenameMeas = "Meas_P00_TestOppkobling_1.txt"
 
 # --> Filnavn for lagring av BEREGNEDE VARIABLE som gjøres offline
 #     Typisk navn:  "CalcOffline_P0X_BeskrivendeTekst_Y.txt"
 #     Dersom du ikke vil lagre BEREGNEDE VARIABLE, la det stå 
 #     filenameCalcOffline = ".txt"
-filenameCalcOffline = ".txt"
+filenameCalcOffline = "CalcOffline_P00_TestOppkobling_1.txt"
 #---------------------------------------------------------------------
 
 

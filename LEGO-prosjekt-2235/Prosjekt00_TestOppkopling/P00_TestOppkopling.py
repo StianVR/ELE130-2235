@@ -30,7 +30,7 @@ import socket
 import json
 import _thread
 import sys
-from typing_extensions import TypeVarTuple
+#from typing_extensions import TypeVarTuple
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #            1) EXPERIMENT SETUP AND FILENAME
@@ -373,7 +373,7 @@ def MathCalculations(Tid, Lys, VinkelPosMotorA, HastighetMotorA,
     referanse = Lys[0]
 
     # matematiske beregninger
-    mellomRegning = a-b
+    mellomRegning = a+b
     mellomRegninger.append(mellomRegning)
 
     # trykknappene er enten True eller False
@@ -391,7 +391,7 @@ def MathCalculations(Tid, Lys, VinkelPosMotorA, HastighetMotorA,
 
     # fiktivt beregning av noe rart
     Pos_vs_Hastighet.append(VinkelPosMotorA[-1] 
-                + a*HastighetMotorA[-1])
+                - a*HastighetMotorA[-1])
 
     # pådragsberegning
     PowerA.append(c*joySide[-1] + b*joyForward[-1])
