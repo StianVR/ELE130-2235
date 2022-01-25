@@ -1,0 +1,3 @@
+Tallformatet viser til kolonnenummer:
+0=Pos_vs_Hastighet, 1=Forward_vs_Side, 
+2=summeringAvPowerA, 3=powerA, 4=mellomRegninger 
