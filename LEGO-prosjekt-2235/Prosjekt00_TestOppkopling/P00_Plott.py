@@ -28,13 +28,13 @@ EV3_IP = "169.254.83.76"
 # Bruk 'Upload'-funksjonen
 
 # --> Filnavn for lagrede MÅLINGER som skal lastes inn offline
-filenameMeas = "Meas_P00_TestOppkobling_1.txt"
+filenameMeas = "Meas_P00_TestOppkopling_NonWired_1.txt"
 
 # --> Filnavn for lagring av BEREGNEDE VARIABLE som gjøres offline
 #     Typisk navn:  "CalcOffline_P0X_BeskrivendeTekst_Y.txt"
 #     Dersom du ikke vil lagre BEREGNEDE VARIABLE, la det stå 
 #     filenameCalcOffline = ".txt"
-filenameCalcOffline = "CalcOffline_P00_TestOppkobling_1.txt"
+filenameCalcOffline = "CalcOffline_P00_TestOppkopling_NonWired_1.txt"
 #---------------------------------------------------------------------
 
 

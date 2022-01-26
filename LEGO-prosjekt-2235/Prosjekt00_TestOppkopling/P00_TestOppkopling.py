@@ -30,22 +30,22 @@ import socket
 import json
 import _thread
 import sys
-#from typing_extensions import TypeVarTuple
+#from typing_extensions import TypeVarTuple#
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #            1) EXPERIMENT SETUP AND FILENAME
 #
 # Skal prosjektet gjennomføres med eller uten USB-ledning?
-wired = True
+wired = False
 
 # --> Filnavn for lagring av MÅLINGER som gjøres online
-filenameMeas = "Meas_P00_TestOppkopling_1.txt"
+filenameMeas = "Meas_P00_TestOppkopling_NonWired_1.txt"
 
 # --> Filnavn for lagring av BEREGNEDE VARIABLE som gjøres online
 #     Typisk navn:  "CalcOnline_P0X_BeskrivendeTekst_Y.txt"
 #     Dersom du ikke vil lagre BEREGNEDE VARIABLE, la det stå 
 #     filenameCalcOnline = ".txt"
-filenameCalcOnline = "CalcOnline_P00_TestOppkopling_1.txt"
+filenameCalcOnline = "CalcOnline_P00_TestOppkoping_NonWired_1.txt"
 # --------------------------------------------------------------------
 
 
