@@ -15,7 +15,7 @@
 clear all
 close all
 
-Meas = readtable('Meas_P00_TestOppkopling_1.txt');
+Meas = readtable('Meas_P00_TestOppkobling_1.txt');
 % ******** Kopier inn header fra .txt-fil to ganger ***********
 
 % 0=Tid, 1=Lys, 2=VinkelPosMotorA,
@@ -30,7 +30,7 @@ joySide         = Meas.Var6;
 joy2            = Meas.Var7;
 
 
-CalcOnline = readtable('CalcOnline_P00_TestOppkopling_1.txt');
+CalcOnline = readtable('CalcOnline_P00_TestOppkobling_1.txt');
 % ******** Kopier inn header fra .txt-fil to ganger ***********
 
 % 0=Pos_vs_Hastighet, 1=Forward_vs_Side,
@@ -42,7 +42,7 @@ powerA_online            = CalcOnline.Var4;
 mellomRegninger_online   = CalcOnline.Var5;
 
 
-CalcOffline = readtable('CalcOffline_P00_TestOppkopling_1.txt');
+CalcOffline = readtable('CalcOffline_P00_TestOppkobling_1.txt');
 % ******** Kopier inn header fra .txt-fil to ganger ***********
 
 % 0=Pos_vs_Hastighet, 1=Forward_vs_Side,
@@ -68,7 +68,7 @@ title('Hastighet motor A')
 axis tight
 
 subplot(3,2,2)
-plot(Tid,powerA_online ,'b-','LineWidth',blue_line)
+plot(Tid(1:size(powerA_online,1):1),powerA_online ,'b-','LineWidth',blue_line)
 hold on
 plot(Tid,powerA_offline ,'r','LineWidth',red_line)
 grid on
@@ -77,7 +77,7 @@ title('Power A')
 axis tight
 
 subplot(3,2,3)
-plot(Tid,summeringAvPowerA_online,'b','LineWidth',blue_line)
+plot(Tid(1:size(powerA_online,1):1),summeringAvPowerA_online,'b','LineWidth',blue_line)
 hold on
 plot(Tid,summeringAvPowerA_offline,'r','LineWidth',red_line)
 grid on
@@ -86,7 +86,7 @@ title('Summering av Power A')
 axis tight
 
 subplot(3,2,4)
-plot(Tid,Forward_vs_Side_online,'b','LineWidth',blue_line)
+plot(Tid(1:size(powerA_online,1):1),Forward_vs_Side_online,'b','LineWidth',blue_line)
 hold on
 plot(Tid,Forward_vs_Side_offline,'r','LineWidth',red_line)
 grid on
@@ -95,7 +95,7 @@ title('Forward vs side joystick')
 axis tight
 
 subplot(3,2,5)
-plot(Tid,Pos_vs_Hastighet_online,'b','LineWidth',blue_line)
+plot(Tid(1:size(powerA_online,1):1),Pos_vs_Hastighet_online,'b','LineWidth',blue_line)
 hold on
 plot(Tid,Pos_vs_Hastighet_offline,'r','LineWidth',red_line)
 grid on

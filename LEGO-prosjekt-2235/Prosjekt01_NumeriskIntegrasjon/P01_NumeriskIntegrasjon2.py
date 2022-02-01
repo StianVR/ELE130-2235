@@ -39,13 +39,13 @@ import sys
 wired = False
 
 # --> Filnavn for lagring av MÅLINGER som gjøres online
-filenameMeas = "Meas_P00_TestOppkopling_NonWired_1.txt"
+filenameMeas = "Meas_P01_NumeriskIntegrasjon_Wired_1.txt"
 
 # --> Filnavn for lagring av BEREGNEDE VARIABLE som gjøres online
 #     Typisk navn:  "CalcOnline_P0X_BeskrivendeTekst_Y.txt"
 #     Dersom du ikke vil lagre BEREGNEDE VARIABLE, la det stå 
 #     filenameCalcOnline = ".txt"
-filenameCalcOnline = "CalcOnline_P00_TestOppkoping_NonWired_1.txt"
+filenameCalcOnline = "CalcOnline_P01_NumeriskIntegrasjon_Wired_1.txt"
 # --------------------------------------------------------------------
 
 
@@ -251,15 +251,13 @@ def main():
             if len(filenameCalcOnline)>4:
                 if k == 0:
                     CalculationsToFileHeader = "Tallformatet viser til kolonnenummer:\n"
-                    CalculationsToFileHeader += "0=Pos_vs_Hastighet, 1=Forward_vs_Side, \n"
-                    CalculationsToFileHeader += "2=summeringAvPowerA, 3=powerA, 4=mellomRegninger \n"
+                    CalculationsToFileHeader += "0=DiffLys, 1=SumDiffLys, \n"
+                    CalculationsToFileHeader += "2=PowerB \n"
                     robot["calculations"].write(CalculationsToFileHeader)
                 CalculationsToFile = ""
-                CalculationsToFile += str(Pos_vs_Hastighet[-1]) + ","
-                CalculationsToFile += str(Forward_vs_Side[-1]) + ","
-                CalculationsToFile += str(summeringAvPowerA[-1]) + ","
-                CalculationsToFile += str(PowerA[-1]) + ","
-                CalculationsToFile += str(mellomRegninger[-1]) + "\n"
+                CalculationsToFile += str(DiffLys[-1]) + ","
+                CalculationsToFile += str(SumDiffLys[-1]) + ","
+                CalculationsToFile += str(PowerB[-1]) + "\n"
 
                 # Skriv CalcultedToFile til .txt-filen navngitt i seksjon 1)
                 robot["calculations"].write(CalculationsToFile)
@@ -289,14 +287,14 @@ def main():
 
                 # målinger
                 DataToOnlinePlot["Tid"] = (Tid[-1])
-                DataToOnlinePlot["HastighetMotorA"] = (HastighetMotorA[-1])
+                DataToOnlinePlot["Lys"] = (Lys[-1])
+                DataToOnlinePlot["VinkelPosMotorA"] = (VinkelPosMotorA[-1])
 
                 # egne variable
-                DataToOnlinePlot["PowerA"] = (PowerA[-1])
-                DataToOnlinePlot["summeringAvPowerA"] = (summeringAvPowerA[-1])
-                DataToOnlinePlot["Forward_vs_Side"] = (Forward_vs_Side[-1])
-                DataToOnlinePlot["Pos_vs_Hastighet"] = (Pos_vs_Hastighet[-1])
+                DataToOnlinePlot["DiffLys"] = (DiffLys[-1])
+                DataToOnlinePlot["SumDiffLys"] = (SumDiffLys[-1])
 
+                # sender over data
                 msg = json.dumps(DataToOnlinePlot)
                 robot["connection"].send(bytes(msg, "utf-b") + b"?")
             # --------------------------------------------------------

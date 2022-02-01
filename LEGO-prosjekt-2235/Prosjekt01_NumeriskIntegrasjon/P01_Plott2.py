@@ -9,7 +9,7 @@ try:
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # ----> Husk å oppdatere denne !!!!!!!!!!!!!!
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    from P00_TestOppkopling import MathCalculations
+    from P01_NumeriskIntegrasjon import MathCalculations
 except Exception as e:
     pass
     # print(e)
@@ -18,23 +18,23 @@ except Exception as e:
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #     A) online and offline: SET ONLINE FLAG, IP-ADRESSE OG FILENAME
 #
-online = False 
+online = True 
 
 # Hvis online = True, pass på at IP-adresse er satt riktig.
-EV3_IP = "169.254.83.76"
+EV3_IP = "169.254.138.169"
 
 # Hvis online = False, husk å overføre filen med målinger og 
 # eventuelt filen med beregnede variable fra EV3 til datamaskinen.
 # Bruk 'Upload'-funksjonen
 
 # --> Filnavn for lagrede MÅLINGER som skal lastes inn offline
-filenameMeas = "Meas_P00_TestOppkopling_NonWired_1.txt"
+filenameMeas = "Meas_P01_Oppkopling_Integrasjon_1.txt"
 
 # --> Filnavn for lagring av BEREGNEDE VARIABLE som gjøres offline
 #     Typisk navn:  "CalcOffline_P0X_BeskrivendeTekst_Y.txt"
 #     Dersom du ikke vil lagre BEREGNEDE VARIABLE, la det stå 
 #     filenameCalcOffline = ".txt"
-filenameCalcOffline = "CalcOffline_P00_TestOppkopling_NonWired_1.txt"
+filenameCalcOffline = "CalcOnline_P01_Oppkopling_Integrasjon_1.txt"
 #---------------------------------------------------------------------
 
 

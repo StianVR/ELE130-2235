@@ -2,17 +2,18 @@
 # coding=utf-8
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# P00_TestOppkopling
+# P0X_BeskrivendeTekst
 #
-# Hensikten med programmet er å teste ut om installasjonen er riktig,
-# og samtidig vise hvordan målinger og egne variable lagres og
-# brukes både online og offline.
+# Hensikten med programmet er å ................
 #
 # Følgende sensorer brukes:
 # - Lyssensor
+# - ...
+# - ...
 #
 # Følgende motorer brukes:
 # - motor A
+# - ...
 #
 # ---------------------------------------------------------------------
 
@@ -30,22 +31,21 @@ import socket
 import json
 import _thread
 import sys
-#from typing_extensions import TypeVarTuple#
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #            1) EXPERIMENT SETUP AND FILENAME
 #
 # Skal prosjektet gjennomføres med eller uten USB-ledning?
-wired = False
+wired = True
 
 # --> Filnavn for lagring av MÅLINGER som gjøres online
-filenameMeas = "Meas_P00_TestOppkopling_NonWired_1.txt"
+filenameMeas = "Meas_P01_NumeriskIntegrasjon_Wired_1.txt"
 
 # --> Filnavn for lagring av BEREGNEDE VARIABLE som gjøres online
 #     Typisk navn:  "CalcOnline_P0X_BeskrivendeTekst_Y.txt"
 #     Dersom du ikke vil lagre BEREGNEDE VARIABLE, la det stå 
 #     filenameCalcOnline = ".txt"
-filenameCalcOnline = "CalcOnline_P00_TestOppkoping_NonWired_1.txt"
+filenameCalcOnline = "CalcOnline_P01_NumeriskIntegrasjon_Wired_1.txt"
 # --------------------------------------------------------------------
 
 
@@ -66,10 +66,12 @@ def main():
 
         # oppdater portnummer
         myColorSensor = ColorSensor(Port.S1)
+        
 
+        
         motorA = Motor(Port.A)
         motorA.reset_angle(0)
-
+        
 
         # Sjekker at joystick er tilkoplet EV3 
         if robot["joystick"]["in_file"] is not None:
@@ -96,17 +98,18 @@ def main():
         # og lagres til .txt-filen i seksjon 
         #  --> 6) STORE MEASUREMENTS TO FILE
 
-
-        Tid = []
-        Lys = []
-        VinkelPosMotorA = []
-        HastighetMotorA = []
-        joyForward = []
-        joySide = []
-        joy2 = []  
+        Tid = []                # registring av tidspunkt for målinger
+        Lys = []                # måling av reflektert lys fra ColorSensor
+                # måling av lys direkte inn fra ColorSensor
         
+        VinkelPosMotorA = []    # vinkelposisjon motor A 
+        
+
+        
+
         print("3) MEASUREMENTS. LISTS INITIALIZED.")
         # ------------------------------------------------------------
+
 
 
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -129,12 +132,11 @@ def main():
         #  --> C) offline: OWN VARIABLES. INITIALIZE LISTS
         # i plottefilen. 
 
-        Pos_vs_Hastighet = []
-        Forward_vs_Side = []
-        summeringAvPowerA = [0]
-        PowerA = []
-        mellomRegninger = []
+        DiffLys = [0]             # tidsskritt
+        SumDiffLys = [0]         # berenging av motorpådrag A
+        PowerA = []         # berenging av motorpådrag B
         
+
         print("4) OWN VARIABLES. LISTS INITIALIZED.")
         # ------------------------------------------------------------
 
@@ -148,8 +150,8 @@ def main():
             #                  5) GET TIME AND MEASUREMENT
             #
             # I denne seksjonen registres måletidspunkt og målinger 
-            # fra sensorer, motorer og styrestikke, og disse lagres
-            # i listene definert i seksjon
+            # fra sensorer, motorer og styrestikke, og disse legges 
+            # inn i listene definert i seksjon
             #  -->  3) MEASUREMENTS. INITIALIZE LISTS
 
             if k==0:        
@@ -162,11 +164,9 @@ def main():
                 Tid.append(perf_counter() - starttidspunkt)
 
             Lys.append(myColorSensor.reflection())
+               
             VinkelPosMotorA.append(motorA.angle())
-            HastighetMotorA.append(motorA.speed())
-            joyForward.append(config.joyForwardInstance)
-            joySide.append(config.joySideInstance)
-            joy2.append(config.joy2Instance)
+          
             # --------------------------------------------------------
 
 
@@ -190,25 +190,22 @@ def main():
             # Husk at siste element i strengen må være '\n'
             if k == 0:
                 MeasurementToFileHeader = "Tall viser til kolonnenummer:\n"
-                MeasurementToFileHeader += "0=Tid, 1=Lys, 2=VinkelPosMotorA, \n"
-                MeasurementToFileHeader += "3=HastighetMotorA, 4=joyForward, \n"
-                MeasurementToFileHeader += "5=joySide, 6=joy2 \n"
+                MeasurementToFileHeader += "0=Tid, 1=Lys, 2=VinkelPosMotorB, \n"
+                MeasurementToFileHeader += "\n"
+                MeasurementToFileHeader += "\n"
                 robot["measurements"].write(MeasurementToFileHeader)
 
             MeasurementToFile = ""
             MeasurementToFile += str(Tid[-1]) + ","
-            MeasurementToFile += str(Lys[-1]) + ","
+            MeasurementToFile += str(Lys[-1]) + ","      
             MeasurementToFile += str(VinkelPosMotorA[-1]) + ","
-            MeasurementToFile += str(HastighetMotorA[-1]) + ","
-            MeasurementToFile += str(joyForward[-1]) + ","
-            MeasurementToFile += str(joySide[-1]) + ","
-            MeasurementToFile += str(joy2[-1]) + "\n"
+            
+            MeasurementToFile += str(DiffLys[-1]) + ","
+            MeasurementToFile += str(SumDiffLys[-1]) + "\n"
 
-
-            # Skriv MeasurementToFile til .txt-filen navngitt i seksjon 1)
+            # Skriv MeasurementToFile til .txt-filen navngitt øverst
             robot["measurements"].write(MeasurementToFile)
             #--------------------------------------------------------
-
 
 
             # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -221,14 +218,23 @@ def main():
             # så kan heller ikke seksjon 7) benyttes. Du må i så 
             # fall kommentere bort kallet til MathCalculations()
             # nedenfor. Du må også kommentere bort motorpådragene. 
-                        
-            MathCalculations(Tid, Lys, VinkelPosMotorA, HastighetMotorA,
-                    joyForward, joySide, joy2, PowerA, summeringAvPowerA,
-                    Forward_vs_Side, Pos_vs_Hastighet, mellomRegninger)
+            
+            MathCalculations(Tid, Lys, PowerA, DiffLys, SumDiffLys)
 
             # Hvis motor(er) brukes i prosjektet så sendes til slutt
+                # Initialverdibereging
+            if len(Lys)<2:
+                SumDiffLys.append(0)
+                DiffLys.append(0)
+            else:
+                DiffLys.append(Lys[-1]-Lys[-2])
+                SumDiffLys.append(SumDiffLys[-1]+DiffLys[-1])
+            # Matematiske beregninger 
+            print('DiffLysMatCalc=',DiffLys[0:])
             # beregnet pådrag til motor(ene).
+           
             motorA.dc(PowerA[-1])
+           
             # --------------------------------------------------------
 
 
@@ -251,15 +257,13 @@ def main():
             if len(filenameCalcOnline)>4:
                 if k == 0:
                     CalculationsToFileHeader = "Tallformatet viser til kolonnenummer:\n"
-                    CalculationsToFileHeader += "0=Pos_vs_Hastighet, 1=Forward_vs_Side, \n"
-                    CalculationsToFileHeader += "2=summeringAvPowerA, 3=powerA, 4=mellomRegninger \n"
+                    CalculationsToFileHeader += "0=DiffLys, 1=SumDiffLys, \n"
+                    CalculationsToFileHeader += "2=PowerA \n"
                     robot["calculations"].write(CalculationsToFileHeader)
                 CalculationsToFile = ""
-                CalculationsToFile += str(Pos_vs_Hastighet[-1]) + ","
-                CalculationsToFile += str(Forward_vs_Side[-1]) + ","
-                CalculationsToFile += str(summeringAvPowerA[-1]) + ","
-                CalculationsToFile += str(PowerA[-1]) + ","
-                CalculationsToFile += str(mellomRegninger[-1]) + "\n"
+                CalculationsToFile += str(DiffLys[-1]) + ","
+                CalculationsToFile += str(SumDiffLys[-1]) + ","
+                CalculationsToFile += str(PowerA[-1]) + "\n"
 
                 # Skriv CalcultedToFile til .txt-filen navngitt i seksjon 1)
                 robot["calculations"].write(CalculationsToFile)
@@ -289,14 +293,17 @@ def main():
 
                 # målinger
                 DataToOnlinePlot["Tid"] = (Tid[-1])
-                DataToOnlinePlot["HastighetMotorA"] = (HastighetMotorA[-1])
+                DataToOnlinePlot["Lys"] = (Lys[-1])
+                DataToOnlinePlot["VinkelPosMotorA"] = (VinkelPosMotorA[-1])
 
                 # egne variable
-                DataToOnlinePlot["PowerA"] = (PowerA[-1])
-                DataToOnlinePlot["summeringAvPowerA"] = (summeringAvPowerA[-1])
-                DataToOnlinePlot["Forward_vs_Side"] = (Forward_vs_Side[-1])
-                DataToOnlinePlot["Pos_vs_Hastighet"] = (Pos_vs_Hastighet[-1])
+                DataToOnlinePlot["DiffLys"] = (DiffLys[-1])
+                DataToOnlinePlot["SumDiffLys"] = (SumDiffLys[-1])
+                
+               
+               
 
+                # sender over data
                 msg = json.dumps(DataToOnlinePlot)
                 robot["connection"].send(bytes(msg, "utf-b") + b"?")
             # --------------------------------------------------------
@@ -329,7 +336,9 @@ def main():
         # - brake() ruller videre, men bruker strømmen generert 
         #   av rotasjonen til å bremse.
         # - hold() bråstopper umiddelbart og holder posisjonen
-        motorA.stop()
+       
+        motorA.brake()
+        
 
         # Lukker forbindelsen til både styrestikke og EV3.
         CloseJoystickAndEV3(robot, wired)
@@ -356,48 +365,17 @@ def main():
 # eller i seksjonene
 #   - seksjonene H) og 12) for offline bruk
 
-def MathCalculations(Tid, Lys, VinkelPosMotorA, HastighetMotorA,
-            joyForward, joySide, joy2, PowerA, summeringAvPowerA,
-            Forward_vs_Side, Pos_vs_Hastighet, mellomRegninger):
+def MathCalculations(Tid, Lys, PowerA, DiffLys, SumDiffLys):
 
-    # Her utfører vi helt MENINGSLØSE beregninger som ikke kan brukes
-    # til noe. De er kun inkludert for at du skal se hvordan strukturen
-    # kan brukes.
 
-    # parametre
-    a = 0.7
-    b = 0.4
-    c = 0.01
+    # Parametre
+    
 
-    # initialverdiberegninger
-    referanse = Lys[0]
 
-    # matematiske beregninger
-    mellomRegning = a+b
-    mellomRegninger.append(mellomRegning)
-
-    # trykknappene er enten True eller False
-    # joy2 er knappen ved tommelen
-    if joy2[-1]:
-        if not joySide[-1] == 0:
-            # kan ikke dividere på 0
-            Forward_vs_Side.append(joyForward[-1]/joySide[-1])
-        else:
-            # dersom joySide = 0, benytt lten verdi for joySide
-            Forward_vs_Side.append(joyForward[-1]*3)
-    else:
-        # hvis knapp ikke trykkes inn, legges første lysverdi inn
-        Forward_vs_Side.append(mellomRegning*referanse)
-
-    # fiktivt beregning av noe rart
-    Pos_vs_Hastighet.append(VinkelPosMotorA[-1] 
-                - a*HastighetMotorA[-1])
-
-    # pådragsberegning
-    PowerA.append(c*joySide[-1] + b*joyForward[-1])
-
-    if len(Tid) > 1:
-        summeringAvPowerA.append(summeringAvPowerA[-1]+PowerA[-1])
+    # Pådragsberegning
+    
+    PowerA.append(SumDiffLys[-1])
+    
 
 #---------------------------------------------------------------------
 
