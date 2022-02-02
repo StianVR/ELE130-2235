@@ -9,7 +9,7 @@ try:
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # ----> Husk å oppdatere denne !!!!!!!!!!!!!!
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    from P01_NumeriskIntegrasjon import MathCalculations
+    from P01_NumeriskIntegrasjon1 import MathCalculations
 except Exception as e:
     pass
     # print(e)
@@ -21,7 +21,7 @@ except Exception as e:
 online = True
 
 # Hvis online = True, pass på at IP-adresse er satt riktig.
-EV3_IP = "169.254.200.101"
+EV3_IP = "169.254.242.19"
 
 # Hvis online = False, husk å overføre filen med målinger og 
 # eventuelt filen med beregnede variable fra EV3 til datamaskinen.
@@ -191,7 +191,7 @@ fig, ax = plt.subplots(nrows=2, ncols=2, sharex=True)
 def figureTitles():
     global ax
     ax[0,0].set_title('Lys')
-    ax[0,1].set_title('DiffLys')
+    ax[0,1].set_title('Tidssprang (Difflys)')
     ax[1,0].set_title('SumDiffLys')
     ax[1,1].set_title('Vinkelposisjon motor B')
     # Vær obs på at ALLE delfigurene må inneholde data. 
@@ -204,8 +204,8 @@ def figureTitles():
 # Repeter om nødvendig noen delfigurer for å fylle ut.
 def plotData():
     ax[0,0].plot(Tid[0:], Lys[0:], 'b')
-    print('Tid=',Tid[0:])
-    print('DiffLys=',DiffLys[0:])
+    # print('Tid=',Tid[0:])
+    # print('DiffLys=',DiffLys[0:])
     # print('SumDiffLys=',SumDiffLys[0:])
     ax[0,1].plot(Tid[0:], DiffLys[0:], 'b')
     ax[1,0].plot(Tid[0:], SumDiffLys[0:], 'b')
@@ -276,7 +276,7 @@ def offline(filenameMeas, filenameCalcOffline):
             with open(filenameCalcOffline, "w") as f:
                 CalculatedToFileHeader = "Tallformatet viser til kolonnenummer:\n"
                 CalculatedToFileHeader += "0=DiffLys, 1=SumDiffLys, \n"
-                CalculatedToFileHeader += "2=PowerB \n"
+                CalculatedToFileHeader += "2=PowerA \n"
                 f.write(CalculatedToFileHeader)
 
                 # Lengde av de MÅLTE listene.

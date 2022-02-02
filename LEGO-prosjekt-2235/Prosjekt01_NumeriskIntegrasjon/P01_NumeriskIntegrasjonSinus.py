@@ -32,6 +32,7 @@ import json
 import _thread
 import sys
 
+
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #            1) EXPERIMENT SETUP AND FILENAME
 #
@@ -100,7 +101,7 @@ def main():
 
         Tid = []                # registring av tidspunkt for målinger
         Lys = []                # måling av reflektert lys fra ColorSensor
-                # måling av lys direkte inn fra ColorSensor
+        DiffLys = []        # måling av lys direkte inn fra ColorSensor
         
         VinkelPosMotorA = []    # vinkelposisjon motor A 
         
@@ -223,14 +224,7 @@ def main():
 
             # Hvis motor(er) brukes i prosjektet så sendes til slutt
                 # Initialverdibereging
-            if len(Lys)<2:
-                SumDiffLys.append(0)
-                DiffLys.append(0)
-            else:
-                DiffLys.append(Lys[-1]-Lys[-2])
-                SumDiffLys.append(SumDiffLys[-1]+DiffLys[-1])
-            # Matematiske beregninger 
-            print('DiffLysMatCalc=',DiffLys[0:])
+
             # beregnet pådrag til motor(ene).
            
             motorA.dc(PowerA[-1])
@@ -369,11 +363,19 @@ def MathCalculations(Tid, Lys, PowerA, DiffLys, SumDiffLys):
 
 
     # Parametre
-    
-
-
+    if len(Lys)<2:
+        SumDiffLys.append(0)
+        DiffLys.append(0)
+        
+    else:
+        Lys.append(Lys[-1]-Lys[1])
+        DiffLys.append(Tid[-1]-Tid[-2])
+        SumDiffLys.append(SumDiffLys[-1]+Lys[-1]*DiffLys[-1])
+            # Matematiske beregninger 
+            
+            
+    print('DiffLysMatCalc=', DiffLys[0:])
     # Pådragsberegning
-    
     PowerA.append(SumDiffLys[-1])
     
 
