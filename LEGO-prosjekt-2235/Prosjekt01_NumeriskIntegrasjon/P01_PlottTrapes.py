@@ -9,7 +9,7 @@ try:
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # ----> Husk å oppdatere denne !!!!!!!!!!!!!!
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    from P01_NumeriskIntegrasjonSinus import MathCalculations
+    from P01_NumeriskIntegrasjonTrapes import MathCalculations
 except Exception as e:
     pass
     # print(e)
@@ -28,13 +28,13 @@ EV3_IP = "169.254.191.234"
 # Bruk 'Upload'-funksjonen
 
 # --> Filnavn for lagrede MÅLINGER som skal lastes inn offline
-filenameMeas = "Meas_P01_NumeriskIntegrasjon_Wired_1.txt"
+filenameMeas = "Meas_P01_NumeriskIntegrasjon_Wired_1_Trapes.txt"
 
 # --> Filnavn for lagring av BEREGNEDE VARIABLE som gjøres offline
 #     Typisk navn:  "CalcOffline_P0X_BeskrivendeTekst_Y.txt"
 #     Dersom du ikke vil lagre BEREGNEDE VARIABLE, la det stå 
 #     filenameCalcOffline = ".txt"
-filenameCalcOffline = "CalcOnline_P01_NumeriskIntegrasjon_Wired_1.txt"
+filenameCalcOffline = "CalcOnline_P01_NumeriskIntegrasjon_Wired_1_Trapes.txt"
 #---------------------------------------------------------------------
 
 
@@ -57,7 +57,7 @@ if not online:
              # måling av gyrovinkelfart fra GyroSensor
 
       # hastighet motor A
-    VinkelPosMotorA = []    # vinkelposisjon motor A 
+    #VinkelPosMotorA = []    # vinkelposisjon motor A 
     
     print("B) offline: MEASUREMENTS. LISTS INTITALIZED.")
     #---------------------------------------------------------------------
@@ -80,8 +80,8 @@ if not online:
     
     DiffLys = []             # tidsskritt
     SumDiffLys = []         # berenging av motorpådrag A
-    PowerA = []         # berenging av motorpådrag B
-         
+    #PowerA = []         # berenging av motorpådrag B
+    Trapes = []     
     
     print("C) offline: OWN VARIABLES. LISTS INITIALIZED.")
     #---------------------------------------------------------------------
@@ -107,11 +107,12 @@ else:
     # målinger
     Tid = []
     Lys = []
-    VinkelPosMotorA = []
+    #VinkelPosMotorA = []
     
     # egne variable
     DiffLys = []
     SumDiffLys = []
+    Trapes = []
     
     
     print("D) online: LISTS FOR DATA TO PLOT INITIALIZED.")
@@ -137,7 +138,8 @@ else:
 def unpackMeasurement(rowOfMeasurement):
     Tid.append(float(rowOfMeasurement[0]))
     Lys.append(int(rowOfMeasurement[1]))
-    VinkelPosMotorA.append(float(rowOfMeasurement[2]))
+    #VinkelPosMotorA.append(float(rowOfMeasurement[2]))
+    Trapes.append(float(rowOfMeasurement[2]))
     DiffLys.append(float(rowOfMeasurement[3]))
     SumDiffLys.append(float(rowOfMeasurement[4]))
 
@@ -164,12 +166,14 @@ def unpackData(rowOfData):
     # målinger
     Tid.append(rowOfData["Tid"])
     Lys.append(rowOfData["Lys"])
-    VinkelPosMotorA.append(rowOfData["VinkelPosMotorA"])
+    #VinkelPosMotorA.append(rowOfData["VinkelPosMotorA"])
+    
     
 
     # egne variable
     DiffLys.append(rowOfData["DiffLys"])
     SumDiffLys.append(rowOfData["SumDiffLys"])
+    Trapes.append(rowOfData["Trapes"])
     
                 
 #-------------------------------------------------------------
@@ -193,7 +197,7 @@ def figureTitles():
     ax[0,0].set_title('Lys')
     ax[0,1].set_title('Tidssprang (Difflys)')
     ax[1,0].set_title('SumDiffLys')
-    ax[1,1].set_title('Vinkelposisjon motor B')
+    ax[1,1].set_title('Trapes')
     # Vær obs på at ALLE delfigurene må inneholde data. 
 
     ax[1,0].set_xlabel('Tid [sec]')
@@ -209,7 +213,8 @@ def plotData():
     # print('SumDiffLys=',SumDiffLys[0:])
     ax[0,1].plot(Tid[0:], DiffLys[0:], 'b')
     ax[1,0].plot(Tid[0:], SumDiffLys[0:], 'b')
-    ax[1,1].plot(Tid[0:], VinkelPosMotorA[0:], 'b')
+    #ax[1,1].plot(Tid[0:], VinkelPosMotorA[0:], 'b')
+    ax[1,1].plot(Tid[0:], Trapes[0:], 'b')
 #---------------------------------------------------------------------
 
 
@@ -252,7 +257,7 @@ def offline(filenameMeas, filenameCalcOffline):
             # beregnet pådrag til motor(ene), selv om pådraget 
             # kan beregnes og plottes.
 
-            MathCalculations(Tid, Lys, PowerA, DiffLys, SumDiffLys)
+            MathCalculations(Tid, Lys, Trapes, DiffLys, SumDiffLys)
             #---------------------------------------------------------
 
         # Eksperiment i offline er nå ferdig
@@ -276,7 +281,7 @@ def offline(filenameMeas, filenameCalcOffline):
             with open(filenameCalcOffline, "w") as f:
                 CalculatedToFileHeader = "Tallformatet viser til kolonnenummer:\n"
                 CalculatedToFileHeader += "0=DiffLys, 1=SumDiffLys, \n"
-                CalculatedToFileHeader += "2=PowerA \n"
+                CalculatedToFileHeader += "2=Trapes \n"
                 f.write(CalculatedToFileHeader)
 
                 # Lengde av de MÅLTE listene.
@@ -285,7 +290,7 @@ def offline(filenameMeas, filenameCalcOffline):
                     CalculatedToFile = ""
                     CalculatedToFile += str(DiffLys[i]) + ","
                     CalculatedToFile += str(SumDiffLys[i]) + ","
-                    CalculatedToFile += str(PowerA[i]) + "\n"
+                    CalculatedToFile += str(Trapes[i]) + "\n"
                     f.write(CalculatedToFile)
         #---------------------------------------------------------
 
