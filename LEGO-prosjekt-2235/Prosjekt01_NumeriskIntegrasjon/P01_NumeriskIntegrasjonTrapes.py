@@ -32,7 +32,6 @@ import json
 import _thread
 import sys
 
-
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #            1) EXPERIMENT SETUP AND FILENAME
 #
@@ -103,8 +102,8 @@ def main():
         Lys = []                # måling av reflektert lys fra ColorSensor
         DiffLys = []        # måling av lys direkte inn fra ColorSensor
         
-        VinkelPosMotorA = []    # vinkelposisjon motor A 
-        
+        #VinkelPosMotorA = []    # vinkelposisjon motor A 
+        Trapes = []
 
         
 
@@ -135,7 +134,7 @@ def main():
 
         DiffLys = [0]             # tidsskritt
         SumDiffLys = [0]         # berenging av motorpådrag A
-        PowerA = []         # berenging av motorpådrag B
+        Trapes = [0]         # berenging av motorpådrag B
         
 
         print("4) OWN VARIABLES. LISTS INITIALIZED.")
@@ -166,7 +165,7 @@ def main():
 
             Lys.append(myColorSensor.reflection())
                
-            VinkelPosMotorA.append(motorA.angle())
+            #VinkelPosMotorA.append(motorA.angle())
           
             # --------------------------------------------------------
 
@@ -191,7 +190,7 @@ def main():
             # Husk at siste element i strengen må være '\n'
             if k == 0:
                 MeasurementToFileHeader = "Tall viser til kolonnenummer:\n"
-                MeasurementToFileHeader += "0=Tid, 1=Lys, 2=VinkelPosMotorB, \n"
+                MeasurementToFileHeader += "0=Tid, 1=Lys, 2=Trapes, \n"
                 MeasurementToFileHeader += "\n"
                 MeasurementToFileHeader += "\n"
                 robot["measurements"].write(MeasurementToFileHeader)
@@ -199,7 +198,7 @@ def main():
             MeasurementToFile = ""
             MeasurementToFile += str(Tid[-1]) + ","
             MeasurementToFile += str(Lys[-1]) + ","      
-            MeasurementToFile += str(VinkelPosMotorA[-1]) + ","
+            MeasurementToFile += str(Trapes[-1]) + ","
             
             MeasurementToFile += str(DiffLys[-1]) + ","
             MeasurementToFile += str(SumDiffLys[-1]) + "\n"
@@ -220,14 +219,14 @@ def main():
             # fall kommentere bort kallet til MathCalculations()
             # nedenfor. Du må også kommentere bort motorpådragene. 
             
-            MathCalculations(Tid, Lys, PowerA, DiffLys, SumDiffLys)
+            MathCalculations(Tid, Lys, Trapes, DiffLys, SumDiffLys)
 
             # Hvis motor(er) brukes i prosjektet så sendes til slutt
                 # Initialverdibereging
 
             # beregnet pådrag til motor(ene).
            
-            motorA.dc(PowerA[-1])
+            #motorA.dc(PowerA[-1])
            
             # --------------------------------------------------------
 
@@ -252,12 +251,12 @@ def main():
                 if k == 0:
                     CalculationsToFileHeader = "Tallformatet viser til kolonnenummer:\n"
                     CalculationsToFileHeader += "0=DiffLys, 1=SumDiffLys, \n"
-                    CalculationsToFileHeader += "2=PowerA \n"
+                    CalculationsToFileHeader += "2=Trapes \n"
                     robot["calculations"].write(CalculationsToFileHeader)
                 CalculationsToFile = ""
                 CalculationsToFile += str(DiffLys[-1]) + ","
                 CalculationsToFile += str(SumDiffLys[-1]) + ","
-                CalculationsToFile += str(PowerA[-1]) + "\n"
+                CalculationsToFile += str(Trapes[-1]) + "\n"
 
                 # Skriv CalcultedToFile til .txt-filen navngitt i seksjon 1)
                 robot["calculations"].write(CalculationsToFile)
@@ -288,7 +287,7 @@ def main():
                 # målinger
                 DataToOnlinePlot["Tid"] = (Tid[-1])
                 DataToOnlinePlot["Lys"] = (Lys[-1])
-                DataToOnlinePlot["VinkelPosMotorA"] = (VinkelPosMotorA[-1])
+                DataToOnlinePlot["Trapes"] = (Trapes[-1])
 
                 # egne variable
                 DataToOnlinePlot["DiffLys"] = (DiffLys[-1])
@@ -331,7 +330,7 @@ def main():
         #   av rotasjonen til å bremse.
         # - hold() bråstopper umiddelbart og holder posisjonen
        
-        motorA.brake()
+        #motorA.brake()
         
 
         # Lukker forbindelsen til både styrestikke og EV3.
@@ -359,27 +358,30 @@ def main():
 # eller i seksjonene
 #   - seksjonene H) og 12) for offline bruk
 
-def MathCalculations(Tid, Lys, PowerA, DiffLys, SumDiffLys):
+def MathCalculations(Tid, Lys, Trapes, DiffLys, SumDiffLys):
 
 
     # Parametre
     if len(Lys)<2:
         SumDiffLys.append(0)
         DiffLys.append(0)
+        Trapes.append(0)
         
     else:
         Lys.append(Lys[-1]-Lys[1])
         DiffLys.append(Tid[-1]-Tid[-2])
         #SumDiffLys.append(SumDiffLys[-1]+Lys[-1]*DiffLys[-1])
         SumDiffLys.append(EulerForward(SumDiffLys[-1], Lys[-1], DiffLys[-1]))
-    
+        Trapes.append(TrapesForward(SumDiffLys[-1], SumDiffLys[-2], Lys[-1], DiffLys[-1]))
+
+        
     
     # Matematiske beregninger 
             
             
     print('DiffLysMatCalc=', DiffLys[0:])
     # Pådragsberegning
-    PowerA.append(SumDiffLys[-1])
+    #PowerA.append(SumDiffLys[-1])
     
 
 #---------------------------------------------------------------------
@@ -390,6 +392,19 @@ def MathCalculations(Tid, Lys, PowerA, DiffLys, SumDiffLys):
 def EulerForward(IntValueOld, FunctionValue, TimeStep):
     IntValueNew=IntValueOld+FunctionValue*TimeStep
     return IntValueNew
+
+def TrapesForward(IntValueOld, IntValueOlder, FunctionValue, TimeStep):
+    IntValueNew=(abs(IntValueOld-IntValueOlder))/2+IntValueOld+FunctionValue*TimeStep
+    return IntValueNew
+
+# def TrapesForward(x0,xn,n)
+#     h=(xn-x0)/n
+#     integration=f(x0)+f(xn)
+#     for i in range (1,n)
+#         k=x0+i*h
+#         integration=integration+2*f(k)
+#     integration=integration*h/2
+#     return integration 
 
 
 if __name__ == '__main__':
