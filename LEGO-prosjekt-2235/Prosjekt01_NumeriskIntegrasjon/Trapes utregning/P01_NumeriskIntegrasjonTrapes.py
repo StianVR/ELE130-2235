@@ -39,13 +39,13 @@ import sys
 wired = True
 
 # --> Filnavn for lagring av MÅLINGER som gjøres online
-filenameMeas = "Meas_P01_NumeriskIntegrasjon_Wired_1.txt"
+filenameMeas = "Meas_P01_NumeriskIntegrasjon_Wired_1:Trapes.txt"
 
 # --> Filnavn for lagring av BEREGNEDE VARIABLE som gjøres online
 #     Typisk navn:  "CalcOnline_P0X_BeskrivendeTekst_Y.txt"
 #     Dersom du ikke vil lagre BEREGNEDE VARIABLE, la det stå 
 #     filenameCalcOnline = ".txt"
-filenameCalcOnline = "CalcOnline_P01_NumeriskIntegrasjon_Wired_1.txt"
+filenameCalcOnline = "CalcOnline_P01_NumeriskIntegrasjon_Wired_1_Trapes.txt"
 # --------------------------------------------------------------------
 
 
@@ -69,8 +69,8 @@ def main():
         
 
         
-        motorA = Motor(Port.A)
-        motorA.reset_angle(0)
+        # motorA = Motor(Port.A)
+        # motorA.reset_angle(0)
         
 
         # Sjekker at joystick er tilkoplet EV3 
@@ -100,7 +100,7 @@ def main():
 
         Tid = []                # registring av tidspunkt for målinger
         Lys = []                # måling av reflektert lys fra ColorSensor
-        DiffLys = []        # måling av lys direkte inn fra ColorSensor
+        T_S = []        # måling av lys direkte inn fra ColorSensor
         
         #VinkelPosMotorA = []    # vinkelposisjon motor A 
         Trapes = []
@@ -132,10 +132,10 @@ def main():
         #  --> C) offline: OWN VARIABLES. INITIALIZE LISTS
         # i plottefilen. 
 
-        DiffLys = [0]             # tidsskritt
-        SumDiffLys = [0]         # berenging av motorpådrag A
+        T_S = [0]             # tidsskritt
+        Volum = [0]         # berenging av motorpådrag A
         Trapes = [0]         # berenging av motorpådrag B
-        
+        Flow = [0]
 
         print("4) OWN VARIABLES. LISTS INITIALIZED.")
         # ------------------------------------------------------------
@@ -200,8 +200,8 @@ def main():
             MeasurementToFile += str(Lys[-1]) + ","      
             MeasurementToFile += str(Trapes[-1]) + ","
             
-            MeasurementToFile += str(DiffLys[-1]) + ","
-            MeasurementToFile += str(SumDiffLys[-1]) + "\n"
+            MeasurementToFile += str(T_S[-1]) + ","
+            MeasurementToFile += str(Volum[-1]) + "\n"
 
             # Skriv MeasurementToFile til .txt-filen navngitt øverst
             robot["measurements"].write(MeasurementToFile)
@@ -219,7 +219,7 @@ def main():
             # fall kommentere bort kallet til MathCalculations()
             # nedenfor. Du må også kommentere bort motorpådragene. 
             
-            MathCalculations(Tid, Lys, Trapes, DiffLys, SumDiffLys)
+            MathCalculations(Tid, Lys, Trapes, T_S, Volum, Flow)
 
             # Hvis motor(er) brukes i prosjektet så sendes til slutt
                 # Initialverdibereging
@@ -250,12 +250,12 @@ def main():
             if len(filenameCalcOnline)>4:
                 if k == 0:
                     CalculationsToFileHeader = "Tallformatet viser til kolonnenummer:\n"
-                    CalculationsToFileHeader += "0=DiffLys, 1=SumDiffLys, \n"
+                    CalculationsToFileHeader += "0=T_S, 1=Volum, \n"
                     CalculationsToFileHeader += "2=Trapes \n"
                     robot["calculations"].write(CalculationsToFileHeader)
                 CalculationsToFile = ""
-                CalculationsToFile += str(DiffLys[-1]) + ","
-                CalculationsToFile += str(SumDiffLys[-1]) + ","
+                CalculationsToFile += str(T_S[-1]) + ","
+                CalculationsToFile += str(Volum[-1]) + ","
                 CalculationsToFile += str(Trapes[-1]) + "\n"
 
                 # Skriv CalcultedToFile til .txt-filen navngitt i seksjon 1)
@@ -290,8 +290,8 @@ def main():
                 DataToOnlinePlot["Trapes"] = (Trapes[-1])
 
                 # egne variable
-                DataToOnlinePlot["DiffLys"] = (DiffLys[-1])
-                DataToOnlinePlot["SumDiffLys"] = (SumDiffLys[-1])
+                DataToOnlinePlot["Tidsskritt"] = (T_S[-1])
+                DataToOnlinePlot["Volum"] = (Volum[-1])
                 
                
                
@@ -358,30 +358,28 @@ def main():
 # eller i seksjonene
 #   - seksjonene H) og 12) for offline bruk
 
-def MathCalculations(Tid, Lys, Trapes, DiffLys, SumDiffLys):
+def MathCalculations(Tid, Lys, Trapes, T_S, Volum, Flow):
 
 
     # Parametre
     if len(Lys)<2:
-        SumDiffLys.append(0)
-        DiffLys.append(0)
+        Volum.append(0)
+        T_S.append(0)
         Trapes.append(0)
         
     else:
-        Lys.append(Lys[-1]-Lys[1])
-        DiffLys.append(Tid[-1]-Tid[-2])
-        #SumDiffLys.append(SumDiffLys[-1]+Lys[-1]*DiffLys[-1])
-        SumDiffLys.append(EulerForward(SumDiffLys[-1], Lys[-1], DiffLys[-1]))
-        Trapes.append(TrapesForward(SumDiffLys[-1], SumDiffLys[-2], Lys[-1], DiffLys[-1]))
+        Flow.append(Lys[-1]-Lys[1])
+        T_S.append(Tid[-1]-Tid[-2])
+        Volum.append(EulerForward(Volum[-1], Flow[-1], T_S[-1]))
+        Trapes.append(TrapesForward(Volum[-1], Volum[-2], Flow[-1], T_S[-1]))
 
         
     
     # Matematiske beregninger 
             
             
-    print('DiffLysMatCalc=', DiffLys[0:])
+    print('TidsskrittMatCalc=', T_S[0:])
     # Pådragsberegning
-    #PowerA.append(SumDiffLys[-1])
     
 
 #---------------------------------------------------------------------
@@ -393,18 +391,9 @@ def EulerForward(IntValueOld, FunctionValue, TimeStep):
     IntValueNew=IntValueOld+FunctionValue*TimeStep
     return IntValueNew
 
-def TrapesForward(IntValueOld, IntValueOlder, FunctionValue, TimeStep):
-    IntValueNew=(abs(IntValueOld-IntValueOlder))/2+IntValueOld+FunctionValue*TimeStep
+def TrapesForward(IntValueOld, FunctionValueOlder, FunctionValue, TimeStep):
+    IntValueNew=IntValueOld+FunctionValue*TimeStep+((FunctionValue-FunctionValueOlder)*TimeStep)/2
     return IntValueNew
-
-# def TrapesForward(x0,xn,n)
-#     h=(xn-x0)/n
-#     integration=f(x0)+f(xn)
-#     for i in range (1,n)
-#         k=x0+i*h
-#         integration=integration+2*f(k)
-#     integration=integration*h/2
-#     return integration 
 
 
 if __name__ == '__main__':

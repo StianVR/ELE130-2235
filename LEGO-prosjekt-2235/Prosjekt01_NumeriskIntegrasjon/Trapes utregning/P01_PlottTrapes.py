@@ -21,7 +21,7 @@ except Exception as e:
 online = True
 
 # Hvis online = True, pass på at IP-adresse er satt riktig.
-EV3_IP = "169.254.191.234"
+EV3_IP = "169.254.107.191"
 
 # Hvis online = False, husk å overføre filen med målinger og 
 # eventuelt filen med beregnede variable fra EV3 til datamaskinen.
@@ -78,9 +78,8 @@ if not online:
     # EGNE VARIABLE her i denne seksjonen når du kjører prosjektet
     # offline.
     
-    DiffLys = []             # tidsskritt
-    SumDiffLys = []         # berenging av motorpådrag A
-    #PowerA = []         # berenging av motorpådrag B
+    T_S = []             # tidsskritt
+    Volum= []         # berenging av motorpådrag A
     Trapes = []     
     
     print("C) offline: OWN VARIABLES. LISTS INITIALIZED.")
@@ -107,11 +106,10 @@ else:
     # målinger
     Tid = []
     Lys = []
-    #VinkelPosMotorA = []
     
     # egne variable
-    DiffLys = []
-    SumDiffLys = []
+    T_S = []
+    Volum = []
     Trapes = []
     
     
@@ -138,10 +136,9 @@ else:
 def unpackMeasurement(rowOfMeasurement):
     Tid.append(float(rowOfMeasurement[0]))
     Lys.append(int(rowOfMeasurement[1]))
-    #VinkelPosMotorA.append(float(rowOfMeasurement[2]))
     Trapes.append(float(rowOfMeasurement[2]))
-    DiffLys.append(float(rowOfMeasurement[3]))
-    SumDiffLys.append(float(rowOfMeasurement[4]))
+    T_S.append(float(rowOfMeasurement[3]))
+    Volum.append(float(rowOfMeasurement[4]))
 
     # i malen her mangler mange målinger, fyll ut selv det du trenger
 
@@ -165,14 +162,12 @@ def unpackData(rowOfData):
 
     # målinger
     Tid.append(rowOfData["Tid"])
-    Lys.append(rowOfData["Lys"])
-    #VinkelPosMotorA.append(rowOfData["VinkelPosMotorA"])
-    
+    Lys.append(rowOfData["Lys"])    
     
 
     # egne variable
-    DiffLys.append(rowOfData["DiffLys"])
-    SumDiffLys.append(rowOfData["SumDiffLys"])
+    T_S.append(rowOfData["Tidsskritt"])
+    Volum.append(rowOfData["Volum"])
     Trapes.append(rowOfData["Trapes"])
     
                 
@@ -195,8 +190,8 @@ fig, ax = plt.subplots(nrows=2, ncols=2, sharex=True)
 def figureTitles():
     global ax
     ax[0,0].set_title('Lys')
-    ax[0,1].set_title('Tidssprang (Difflys)')
-    ax[1,0].set_title('SumDiffLys')
+    ax[0,1].set_title('Tidssprang')
+    ax[1,0].set_title('Volum')
     ax[1,1].set_title('Trapes')
     # Vær obs på at ALLE delfigurene må inneholde data. 
 
@@ -209,10 +204,8 @@ def figureTitles():
 def plotData():
     ax[0,0].plot(Tid[0:], Lys[0:], 'b')
     # print('Tid=',Tid[0:])
-    # print('DiffLys=',DiffLys[0:])
-    # print('SumDiffLys=',SumDiffLys[0:])
-    ax[0,1].plot(Tid[0:], DiffLys[0:], 'b')
-    ax[1,0].plot(Tid[0:], SumDiffLys[0:], 'b')
+    ax[0,1].plot(Tid[0:], T_S[0:], 'b')
+    ax[1,0].plot(Tid[0:], Volum[0:], 'b')
     #ax[1,1].plot(Tid[0:], VinkelPosMotorA[0:], 'b')
     ax[1,1].plot(Tid[0:], Trapes[0:], 'b')
 #---------------------------------------------------------------------
@@ -257,7 +250,7 @@ def offline(filenameMeas, filenameCalcOffline):
             # beregnet pådrag til motor(ene), selv om pådraget 
             # kan beregnes og plottes.
 
-            MathCalculations(Tid, Lys, Trapes, DiffLys, SumDiffLys)
+            MathCalculations(Tid, Lys, Trapes, T_S, Volum)
             #---------------------------------------------------------
 
         # Eksperiment i offline er nå ferdig
@@ -280,7 +273,7 @@ def offline(filenameMeas, filenameCalcOffline):
         if len(filenameCalcOffline)>4:
             with open(filenameCalcOffline, "w") as f:
                 CalculatedToFileHeader = "Tallformatet viser til kolonnenummer:\n"
-                CalculatedToFileHeader += "0=DiffLys, 1=SumDiffLys, \n"
+                CalculatedToFileHeader += "0=T_S, 1=Volum, \n"
                 CalculatedToFileHeader += "2=Trapes \n"
                 f.write(CalculatedToFileHeader)
 
@@ -288,8 +281,8 @@ def offline(filenameMeas, filenameCalcOffline):
                 # Husk at siste element i strengen må være '\n'            
                 for i in range(0,len(Tid)):
                     CalculatedToFile = ""
-                    CalculatedToFile += str(DiffLys[i]) + ","
-                    CalculatedToFile += str(SumDiffLys[i]) + ","
+                    CalculatedToFile += str(T_S[i]) + ","
+                    CalculatedToFile += str(Volum[i]) + ","
                     CalculatedToFile += str(Trapes[i]) + "\n"
                     f.write(CalculatedToFile)
         #---------------------------------------------------------
