@@ -39,7 +39,7 @@ import sys
 wired = True
 
 # --> Filnavn for lagring av MÅLINGER som gjøres online
-filenameMeas = "Meas_P01_NumeriskIntegrasjon_Wired_1:Trapes.txt"
+filenameMeas = "Meas_P01_NumeriskIntegrasjon_Wired_1_Trapes.txt"
 
 # --> Filnavn for lagring av BEREGNEDE VARIABLE som gjøres online
 #     Typisk navn:  "CalcOnline_P0X_BeskrivendeTekst_Y.txt"
